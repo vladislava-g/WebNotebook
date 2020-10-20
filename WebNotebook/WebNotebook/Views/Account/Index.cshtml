@@ -1,0 +1,96 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebNotebook</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/login.css" />
+    <link rel="stylesheet" href="~/css/simpleNotify.css" />
+</head>
+
+<body>
+    <div id="preloader" class="loading-screen d-none">
+        <div class="loading-animation">
+            <div class="loading-bar"></div>
+        </div>
+    </div>
+<div id="colorOverlay"></div>
+
+<div class="container__full">
+    <div class="images">
+
+    </div>
+    <div class="content">
+        <div class="login content__block">
+            <header class="content__header">
+                <p>Don't you have an account?</p>
+                <button class="btn btn__empty" id="switch-to-register">Sign up</button>
+            </header>
+            <form class="content__form" id="login">
+                <header>
+                    <h1>Welcome Back</h1>
+                    <p>Login to your account</p>
+                </header>
+                <div class="form__inputs">
+                    <div class="input__group">
+                        <label for="login__username">Email</label>
+                        <input type="email" name="email" id="login__username" placeholder="Your email" required>
+                    </div>
+                    <div class="input__group">
+                        <label for="login__password">Password</label>
+                        <input type="password" name="password" id="login__password" placeholder="Your password" required>
+                    </div>
+                    @*<span class="forgot__password">Forgot password?</span>*@
+                    @*<div class="input__group" id="recover-password">
+                            <label for="login__username">Enter your email to recover password</label>
+                            <input type="email" name="recover-email" id="recover-email" placeholder="Your email">
+                            <div id="send-recovery" class="btn btn__primary btn__login">Send</div>
+                        </div>*@
+                </div>
+                <button type="submit" class="btn btn__primary btn__login">Login</button>
+            </form>
+        </div>
+    </div>
+    <div class="content hidden">
+        <div class="login content__block">
+            <header class="content__header">
+                <p>Already a member?</p>
+                <button class="btn btn__empty" id="switch-to-login">Login</button>
+            </header>
+            <form class="content__form" id="register">
+                <header>
+                    <h1>Nice to meet you</h1>
+                    <p>Create your account</p>
+                </header>
+                <div class="form__inputs">
+                    <div class="input__group">
+                        <label for="reg__name">Name</label>
+                        <input type="text" name="name" id="reg__name" placeholder="John" required>
+                    </div>
+                    <div class="input__group">
+                        <label for="reg__username">Email</label>
+                        <input type="email" name="email" id="reg__username" placeholder="john@gmail.com" required>
+                    </div>
+                    <div class="input__group">
+                        <label for="reg__password">Password</label>
+                        <input type="password" name="password" id="reg__password" placeholder="john1234" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn__primary btn__register">Create an account</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="~/js/simpleNotify.js"></script>
+<script src="~/js/login.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

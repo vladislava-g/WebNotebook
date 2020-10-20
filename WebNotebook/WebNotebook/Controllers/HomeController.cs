@@ -3,27 +3,26 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using WebNotebook.Infrastructure;
 using WebNotebook.Models;
 
 namespace WebNotebook.Controllers
 {
+    [Authorize]
+
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        IRepository<User> repository;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IRepository<User> repository)
         {
-            _logger = logger;
+            this.repository = repository;
         }
 
         public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
         {
             return View();
         }
