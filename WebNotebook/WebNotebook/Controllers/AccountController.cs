@@ -35,7 +35,6 @@ namespace WebNotebook.Controllers
             try
             {
                 user = repository.GetAll().Where(x => x.Email == model.Email && x.Password == model.Password).Single();
-
             }
             catch { }
 
@@ -45,7 +44,7 @@ namespace WebNotebook.Controllers
             {
                 try
                 {
-                    await Authenticate(user.Email, user.Password);
+                    await Authenticate(user);
                     return new JsonResult(new Data { Success = true, Message = "Connecting..." });
                 }
                 catch { }
@@ -54,14 +53,15 @@ namespace WebNotebook.Controllers
             return new JsonResult(new Data { Success = false, Message = "Incorrect Email or Password" });
         }
 
-        private async Task Authenticate(string email, string password)
+        private async Task Authenticate(User user)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.UserData, user.Password) //hash!
             };
 
-            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimTypes.Email, ClaimTypes.UserData);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
 

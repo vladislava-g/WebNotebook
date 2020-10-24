@@ -9,6 +9,7 @@ namespace WebNotebook.Models
     public class DbContext : Microsoft.EntityFrameworkCore.DbContext
     {
         public DbSet<User> User { get; set; }
+        public DbSet<Notebook> Notebook { get; set; }
         public DbContext(DbContextOptions<DbContext> options)
             : base(options)
         {

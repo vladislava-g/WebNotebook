@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WebNotebook.Infrastructure;
 using WebNotebook.Models;
+using WebNotebook.Models.Repositories;
 
 namespace WebNotebook
 {
@@ -37,6 +38,7 @@ namespace WebNotebook
                 });
 
             services.AddTransient<IRepository<User>, UserRepository>();
+            services.AddTransient<IRepository<Notebook>, NotebookRepository>();
 
             services.AddControllersWithViews();
         }

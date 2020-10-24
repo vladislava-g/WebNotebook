@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebNotebook.Infrastructure;
 
-namespace WebNotebook.Models
+namespace WebNotebook.Models.Repositories
 {
     public class UserRepository : IRepository<User>
     {
@@ -22,7 +22,7 @@ namespace WebNotebook.Models
 
         public void Delete(User obj)
         {
-            db.Remove(obj);
+            db.User.Remove(obj);
             db.SaveChanges();
         }
 

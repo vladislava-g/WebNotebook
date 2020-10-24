@@ -19,11 +19,26 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")"
+                               asp-area="" asp-controller="Home" asp-action="Index">Notebooks</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark @(ViewContext.RouteData.Values["Action"].ToString() == "Notes" ? "active" : "")"
+                               asp-area="" asp-controller="Home" asp-action="Notes">All Notes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark @(ViewContext.RouteData.Values["Action"].ToString() == "Favorites" ? "active" : "")"
+                               asp-area="" asp-controller="Home" asp-action="Favorites">Favorites</a>
                         </li>
                     </ul>
                 </div>
             </div>
+                <div class="actions">
+                    <img alt="Write" class="action-icon" title="Write" src="~/css/Images/write.png" />
+                    <img alt="Capture" class="action-icon" title="Capture" src="~/css/Images/camera.png" />
+                    <img alt="To do" class="action-icon" title="To do" src="~/css/Images/checkbox.png" />
+                    <div id="profile-img">V</div>
+                </div>
         </nav>
     </header>
     <div class="container">
