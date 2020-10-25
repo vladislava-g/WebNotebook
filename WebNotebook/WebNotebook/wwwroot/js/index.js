@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    $('main').load('/Home/GetNotebooks');
+    $('main').load(`/Home/GetNotebooks?id=${$('#userId').text()}`);
 });
 
 $(".nav-link").on('click', function (event) {
@@ -9,5 +9,6 @@ $(".nav-link").on('click', function (event) {
     $(".active").removeClass("active");
     $(this).addClass('active');
 
-    $('main').load(`/Home/${$(this).attr("action_name")}`);
+    $('main').load(`/Home/${$(this).attr("action_name")}?id=${$('#userId').text()}`);
+
 });

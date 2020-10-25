@@ -1,6 +1,29 @@
-﻿
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model WebNotebook.Models.Notebook;
 
-<h1>Notebooks</h1>
+<div id="notebooks-header">
+    <h4>Notebooks</h4>
+    <div class="options">
+        <p><img src="~/css/Images/plus.png" />Notebook</p>
+        <p> <img src="~/css/Images/sort.png" />Date Modified</p>
+    </div>
+</div>
+
+
+<div id="notebooks">
+    @foreach (Notebook notebook in ViewBag.Notebooks)
+    {
+        var style = notebook.Cover != null ? "background-image: url(" + (notebook.Cover) + ")" : "background-color:lightgreen";
+        <div class="notebook">
+            <div class="cover" style="@style">
+                <div class="notebook-actions">
+                    <div class="notebook-all-actions">
+                        <img class="notebook-action" src="~/css/Images/info.png" title="Info"/>
+                        <img class="notebook-action" src="~/css/Images/trash.png" title="Delete" />
+                    </div>
+                </div>
+            </div>
+            <p class="title">@notebook.Name</p>
+        </div>
+    }
+</div>
+

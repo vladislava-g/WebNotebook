@@ -28,30 +28,32 @@ namespace WebNotebook.Controllers
 
         public IActionResult Index()
         {
-            var claim_email = HttpContext.User.Claims.ToList().FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            var claim_password = HttpContext.User.Claims.ToList().FirstOrDefault(c => c.Type == ClaimTypes.UserData)?.Value;
-
-            if (claim_email == null || claim_password == null || !Authorization(claim_email, claim_password))
+            if(!Authorization())
                 return RedirectToAction("Index", "Account");
+            ViewBag.UserId = current_user.Id;
 
             return View();
         }
 
-        private bool Authorization(string email, string password)
+        private bool Authorization()
         {
+            var claim_email = HttpContext.User.Claims.ToList().FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var claim_password = HttpContext.User.Claims.ToList().FirstOrDefault(c => c.Type == ClaimTypes.UserData)?.Value;
+
             User user = null;
             try
             {
-                user = repository.GetAll().Where(x => x.Email == email && x.Password == password).Single();
+                user = repository.GetAll().Where(x => x.Email == claim_email && x.Password == claim_password).Single();
                 current_user = user;
             }
             catch { }
 
-            return user != null ? true : false;
+            return claim_email == null || claim_password == null || user == null ? false : true;
         }
 
-        public ActionResult GetNotebooks()
+        public ActionResult GetNotebooks(int? id = 0)
         {
+            ViewBag.Notebooks = notebookRepository.GetAll().Where(x => x.CreatorId == id);
             return PartialView("_Notebooks");
         }   
         
