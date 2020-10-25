@@ -50,22 +50,19 @@ namespace WebNotebook.Controllers
             return user != null ? true : false;
         }
 
-        public IActionResult Notebooks()
+        public ActionResult GetNotebooks()
         {
-            
-            return View();
-        }
-
-        public IActionResult Notes()
+            return PartialView("_Notebooks");
+        }   
+        
+        public ActionResult GetNotes()
         {
-
-            return View();
-        }
-
-        public IActionResult Favorites()
+            return PartialView("_Notes");
+        }   
+        
+        public ActionResult GetFavorites()
         {
-
-            return View();
+            return PartialView("_Favorites");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
