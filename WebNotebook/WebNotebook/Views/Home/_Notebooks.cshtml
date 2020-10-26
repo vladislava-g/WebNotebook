@@ -3,7 +3,7 @@
 <div id="notebooks-header">
     <h4>Notebooks</h4>
     <div class="options">
-        <p><img src="~/css/Images/plus.png" />Notebook</p>
+        <p id="addNotebook"><img src="~/css/Images/plus.png" />Notebook</p>
         <p> <img src="~/css/Images/sort.png" />Date Modified</p>
     </div>
 </div>
@@ -12,13 +12,14 @@
 <div id="notebooks">
     @foreach (Notebook notebook in ViewBag.Notebooks)
     {
-        var style = notebook.Cover != null ? "background-image: url(" + (notebook.Cover) + ")" : "background-color:lightgreen";
+        var default_img = "https://i.pinimg.com/564x/aa/39/8a/aa398a7716c8f0b75f7b60ee3225a5fc.jpg";
+        var style = "background-image: url(" + (notebook.Cover != null ? notebook.Cover : default_img) + ")";
         <div class="notebook">
             <div class="cover" style="@style">
                 <div class="notebook-actions">
-                    <div class="notebook-all-actions">
-                        <img class="notebook-action" src="~/css/Images/info.png" title="Info"/>
-                        <img class="notebook-action" src="~/css/Images/trash.png" title="Delete" />
+                    <div class="notebook-all-actions" notebook-id="@notebook.Id">
+                        <img class="notebook-action notebook-info" src="~/css/Images/info.png" title="Info" />
+                        <img class="notebook-action notebook-delete" src="~/css/Images/trash.png" title="Delete" />
                     </div>
                 </div>
             </div>
@@ -27,3 +28,62 @@
     }
 </div>
 
+
+<script src="~/js/simpleNotify.js"></script>
+<script>
+    updateDeleteBtn();
+
+    $('#addNotebook').on('click', async function () {
+
+        let new_notebook = null;
+
+        await $.ajax({
+            type: "POST",
+            url: `/Notebook/Create?id=${@ViewBag.UserId}`,
+            data: {},
+            success: function (response) {
+                new_notebook = response;
+            },
+            error: function (response) {
+                console.log(response.responseText);
+            }
+        });
+
+                        $("#notebooks").prepend(`
+                <div class="notebook">
+                <div class="cover" style="background-image: url(${new_notebook.cover})">
+                <div class="notebook-actions">
+                    <div class="notebook-all-actions" notebook-id="${new_notebook.id}">
+                        <img class="notebook-action notebook-info" src="/css/Images/info.png" title="Info"/>
+                        <img class="notebook-action notebook-delete" src="/css/Images/trash.png" title="Delete" />
+                    </div>
+                </div>
+                </div>
+                <p class="title">${new_notebook.name}</p>
+                </div>`
+                );
+
+        updateDeleteBtn();
+
+    });
+
+
+    function updateDeleteBtn(){
+            $('.notebook-delete').on('click', async function (e) {
+         $(this).parent().parent().parent().parent().hide();
+            await $.ajax({
+            type: "POST",
+            url: `/Notebook/Delete?id=${$(this).parent().attr('notebook-id')}`,
+            data: {},
+            success: function (response) {
+                 simpleNotify.notify("Notebook successfully deleted", "success");
+            },
+            error: function (response) {
+                console.log(response.responseText);
+                simpleNotify.notify(response.responseText, "red");
+            }
+        });
+     });
+    }
+
+</script>

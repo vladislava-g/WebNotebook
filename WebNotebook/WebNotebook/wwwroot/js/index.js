@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    $('main').load(`/Home/GetNotebooks?id=${$('#userId').text()}`);
+    $('main').load(`/Notebook/GetNotebooks?id=${$('#userId').text()}`);
 });
 
 $(".nav-link").on('click', function (event) {
@@ -9,6 +9,10 @@ $(".nav-link").on('click', function (event) {
     $(".active").removeClass("active");
     $(this).addClass('active');
 
-    $('main').load(`/Home/${$(this).attr("action_name")}?id=${$('#userId').text()}`);
+    $('main').load(`/${$(this).attr("action_name")}?id=${$('#userId').text()}`);
 
 });
+
+//var newDiv = document.createElement("div");
+//newDiv.innerHTML = xmlhttp.responseText;
+//document.getElementById("results").childNodes.addAt(0, newDiv);

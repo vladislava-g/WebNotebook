@@ -14,5 +14,6 @@ namespace WebNotebook.Models
         public DateTime Created { set; get; }
         public DateTime Modified { set; get; }
         public int IsDefault { set; get; }
+        public int? DefaultImage { set; get; }
     }
 }

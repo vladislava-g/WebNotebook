@@ -17,13 +17,11 @@ namespace WebNotebook.Controllers
     public class HomeController : Controller
     {
         IRepository<User> repository;
-        IRepository<Notebook> notebookRepository;
         User current_user = null;
 
-        public HomeController(IRepository<User> repository, IRepository<Notebook> notebookRepository)
+        public HomeController(IRepository<User> repository)
         {
             this.repository = repository;
-            this.notebookRepository = notebookRepository;
         }
 
         public IActionResult Index()
@@ -50,12 +48,7 @@ namespace WebNotebook.Controllers
 
             return claim_email == null || claim_password == null || user == null ? false : true;
         }
-
-        public ActionResult GetNotebooks(int? id = 0)
-        {
-            ViewBag.Notebooks = notebookRepository.GetAll().Where(x => x.CreatorId == id);
-            return PartialView("_Notebooks");
-        }   
+   
         
         public ActionResult GetNotes()
         {

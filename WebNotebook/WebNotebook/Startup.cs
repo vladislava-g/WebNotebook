@@ -39,6 +39,7 @@ namespace WebNotebook
 
             services.AddTransient<IRepository<User>, UserRepository>();
             services.AddTransient<IRepository<Notebook>, NotebookRepository>();
+            services.AddTransient<IRepository<DefaultImage>, DefaultImageRepository>();
 
             services.AddControllersWithViews();
         }
