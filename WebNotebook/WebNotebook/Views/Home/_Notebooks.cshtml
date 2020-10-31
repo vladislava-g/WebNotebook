@@ -1,5 +1,7 @@
 ﻿@model WebNotebook.Models.Notebook;
-
+@{
+    var default_img = "https://i.pinimg.com/564x/aa/39/8a/aa398a7716c8f0b75f7b60ee3225a5fc.jpg";
+}
 <div id="notebooks-header">
     <h4>Notebooks</h4>
     <div class="options">
@@ -12,26 +14,69 @@
 <div id="notebooks">
     @foreach (Notebook notebook in ViewBag.Notebooks)
     {
-        var default_img = "https://i.pinimg.com/564x/aa/39/8a/aa398a7716c8f0b75f7b60ee3225a5fc.jpg";
         var style = "background-image: url(" + (notebook.Cover != null ? notebook.Cover : default_img) + ")";
         <div class="notebook">
             <div class="cover" style="@style">
                 <div class="notebook-actions">
                     <div class="notebook-all-actions" notebook-id="@notebook.Id">
-                        <img class="notebook-action notebook-info" src="~/css/Images/info.png" title="Info" />
+                        <img class="notebook-action notebook-info" src="~/css/Images/info.png"
+                             name="@notebook.Name" created="@notebook.Created" modified="@notebook.Modified"
+                             cover="@notebook.Cover" notebook-id="@notebook.Id" notes="2"
+                             data-toggle="modal" data-target="#myModal" title="Info" />
                         <img class="notebook-action notebook-delete" src="~/css/Images/trash.png" title="Delete" />
                     </div>
                 </div>
             </div>
-            <p class="title">@notebook.Name</p>
+            <p class="title" id="notebook-title-@notebook.Id">@notebook.Name</p>
         </div>
     }
-</div>
+
+    <div class="modal fade  come-from-modal right" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Info</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <div class="information-block">
+                            <div class="notebook info-cover">
+                                <div class="cover" id="info-url">
+                                </div>
+                                <p class="title custom-cover-btn">Custom Cover</p>
+                            </div>
+                            <div class="information">
+                                <input type="text" id="info-name" />
+                                <div class="flex-display">
+                                    <img src="~/css/Images/notes.png">
+                                    <p id="info-notes">
+                                    </p>
+                                </div>
+                                <div class="flex-display">
+                                    <img src="~/css/Images/date.png" />
+                                    <p id="info-date">
+                                    </p>
+                                </div>
+                                <div class="flex-display">
+                                    <img src="~/css/Images/date-modified.png" class="info-mod-img" />
+                                    <p id="info-date-modified">
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
 
-<script src="~/js/simpleNotify.js"></script>
-<script>
+    <script src="~/js/simpleNotify.js"></script>
+    <script>
     updateDeleteBtn();
+    updateInfo();
 
     $('#addNotebook').on('click', async function () {
 
@@ -54,16 +99,20 @@
                 <div class="cover" style="background-image: url(${new_notebook.cover})">
                 <div class="notebook-actions">
                     <div class="notebook-all-actions" notebook-id="${new_notebook.id}">
-                        <img class="notebook-action notebook-info" src="/css/Images/info.png" title="Info"/>
+                        <img class="notebook-action notebook-info" src="/css/Images/info.png"
+                             name="${new_notebook.name}" created="${new_notebook.created}" modified="${new_notebook.modified}"
+                             cover="${new_notebook.cover}" notebook-id="${new_notebook.id}" notes="2"
+                             data-toggle="modal" data-target="#myModal" title="Info"/>
                         <img class="notebook-action notebook-delete" src="/css/Images/trash.png" title="Delete" />
                     </div>
                 </div>
                 </div>
-                <p class="title">${new_notebook.name}</p>
+                <p class="title" id="notebook-title-${new_notebook.id}">${new_notebook.name}</p>
                 </div>`
                 );
 
         updateDeleteBtn();
+        updateInfo();
 
     });
 
@@ -84,6 +133,49 @@
             }
         });
      });
-    }
+        }
 
-</script>
+        function updateInfo() {
+
+        $('.notebook-info').on('click', function () {
+        let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+            $('#info-name').val($(this).attr('name'));
+            console.log($('#info-name').val($(this).attr('name')));
+        $('#info-name').attr('notebook-id', $(this).attr('notebook-id'));
+
+        $('#info-notes').text($(this).attr('notes') + ' Notes');
+
+        let created = new Date($(this).attr('created'));
+        let modified = new Date($(this).attr('modified'));
+
+        $('#info-date').text(created.getDate() + " " + monthNames[created.getMonth()] + " " + created.getFullYear());
+        $('#info-date-modified').text(modified.getDate() + " " + monthNames[modified.getMonth()] + " " + modified.getFullYear());
+
+        let url = $(this).attr('cover') != null ? $(this).attr('cover') : "@default_img";
+        $('#info-url').css('background-image', 'url("' + url + '")');
+    });
+
+        $('#info-name').on('change', function () {
+            let id = $(this).attr('notebook-id');
+            let name = $(this).val();
+
+            $.ajax({
+            type: "POST",
+            url: `/Notebook/Update?id=${id}&name=${name}`,
+            data: {},
+                success: function (response) {
+                    $('#notebook-title-' + id).text(name);
+            },
+            error: function (response) {
+                console.log(response.responseText);
+            }
+        });
+
+        })
+
+        }
+
+
+
+    </script>

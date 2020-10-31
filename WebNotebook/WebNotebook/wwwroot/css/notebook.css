@@ -96,3 +96,50 @@
         opacity: 1;
         cursor: pointer;
     }
+
+/*------------------------------INFO---------------------------------*/
+
+.information-block {
+    display: flex !important;
+}
+
+    .information-block  .info-cover {
+        margin: 15px;
+    }
+
+    .information-block .information{
+        margin-top: 15px;
+    }
+
+        .information-block .information img {
+            height: 25px !important;
+            margin-right: 5px;
+        }
+        .information-block .information .info-mod-img {
+            height: 30px !important;
+            margin-right: 1px;
+        }
+
+#info-name {
+    border: none;
+    background-image: url(/css/Images/edit-gray.png);
+    background-repeat: no-repeat;
+    background-size: 18px;
+    background-position: right;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+    #info-name:focus {
+        border: none;
+        outline: none;
+        background-image: none;
+    }
+
+.custom-cover-btn:hover{
+    cursor: pointer;
+}
+
+.flex-display{
+    display: flex !important;
+}

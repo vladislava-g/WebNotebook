@@ -61,5 +61,25 @@ namespace WebNotebook.Controllers
             }
         }
 
+        public ActionResult Update(int id = 0, string name = "", string cover = "")
+        {
+            try
+            {
+                var notebook = notebookRepository.Get(id);
+                if (name != "")
+                    notebook.Name = name;
+                if (cover != "")
+                    notebook.Cover = cover;
+
+                notebookRepository.SaveChanges();
+                return Json(new Data() { Success = true });
+            }
+            catch
+            {
+                return Json(new Data() { Success = false });
+
+            }
+        }
+
     }
 }

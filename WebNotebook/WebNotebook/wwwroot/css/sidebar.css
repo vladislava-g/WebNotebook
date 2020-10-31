@@ -1,0 +1,33 @@
+﻿.come-from-modal.left .modal-dialog,
+.come-from-modal.right .modal-dialog {
+    position: fixed !important;
+    right: -5px !important;
+    top: -4% !important;
+    width: 420px !important;
+    height: 100% !important;
+    transform: translate3d(0%, 0, 0) !important;
+}
+
+.come-from-modal.left .modal-content,
+.come-from-modal.right .modal-content {
+    height: 100%;
+    overflow-y: auto;
+    border-radius: 0px;
+}
+
+.come-from-modal.left .modal-body,
+.come-from-modal.right .modal-body {
+    padding: 15px 15px 80px;
+}
+
+.come-from-modal.right.fade .modal-dialog {
+    right: -320px;
+    -webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+    -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+    -o-transition: opacity 0.3s linear, right 0.3s ease-out;
+    transition: opacity 0.3s linear, right 0.3s ease-out;
+}
+
+.come-from-modal.right.fade.in .modal-dialog {
+    right: 0;
+}
