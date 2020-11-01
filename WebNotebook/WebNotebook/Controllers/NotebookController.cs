@@ -30,6 +30,34 @@ namespace WebNotebook.Controllers
             return PartialView("~/Views/Home/_Notebooks.cshtml");
         }
 
+        public ActionResult SortNotebooks(int? id = 0, int? option = 2, int? direction = 2)
+        {
+            var notebooks = notebookRepository.GetAll().Where(x => x.CreatorId == id);
+            switch (option)
+            {
+                case 1:
+                    if (direction == 2)
+                        notebooks = notebooks.OrderBy(x => x.Name);
+                    else
+                        notebooks = notebooks.OrderByDescending(x => x.Name);
+                    break;
+                case 2:
+                    if (direction == 2)
+                        notebooks = notebooks.OrderBy(x => x.Modified);
+                    else
+                        notebooks = notebooks.OrderByDescending(x => x.Modified);
+                    break;
+                case 3:
+                    if (direction == 2)
+                        notebooks = notebooks.OrderBy(x => x.Created);
+                    else
+                        notebooks = notebooks.OrderByDescending(x => x.Created);
+                    break;
+            }
+
+            return Json(new { Data = notebooks });
+        }
+
         public ActionResult GetDefaultImages()
         {
             return Json(new { Data = imagesRepository.GetAll() });
@@ -83,6 +111,7 @@ namespace WebNotebook.Controllers
                     notebook.DefaultImage = default_img;
                 }
 
+                notebook.Modified = DateTime.Now;
                 notebookRepository.SaveChanges();
                 return Json(new Data() { Success = true });
             }

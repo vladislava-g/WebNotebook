@@ -1,0 +1,31 @@
+﻿#sortNotebooks{
+    border:none;
+    background-color: transparent;
+}
+
+#sortNotebooks:focus{
+    border:none !important;
+    outline: none!important;
+    background-color: transparent;
+}
+#sortNotebooks:hover {
+    cursor: pointer;
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
+    text-overflow: '';
+}
+
+#sort-icon {
+    width: 16px !important;
+    margin-right: 5px !important;
+    margin-top: -5px !important;
+    transition: .3s;
+}
+
+#sort-icon:hover{
+    opacity: .3;
+}

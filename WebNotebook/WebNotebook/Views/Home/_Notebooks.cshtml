@@ -8,7 +8,14 @@
     <h4>Notebooks</h4>
     <div class="options">
         <p id="addNotebook"><img src="~/css/Images/plus.png" />Notebook</p>
-        <p> <img src="~/css/Images/sort.png" />Date Modified</p>
+        <p>
+            <img src="~/css/Images/sort.png" id="sort-icon" />
+            <select id="sortNotebooks">
+                <option value="1">Name&nbsp;</option>
+                <option value="2" selected>Date Modified&nbsp;</option>
+                <option value="3">Date Created&nbsp;</option>
+            </select>
+        </p>
     </div>
 </div>
 
@@ -32,55 +39,55 @@
             <p class="title" id="notebook-title-@notebook.Id">@notebook.Name</p>
         </div>
     }
-
-    <div class="modal fade  come-from-modal right" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Info</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <div>
-                        <div class="information-block">
-                            <div class="notebook info-cover">
-                                <div class="cover" id="info-url">
-                                </div>
-                                <p class="title custom-cover-btn" id="custom-cover">Custom Cover</p>
-                                <input type='file' id="uploadImage" class="d-none" />
+</div>
+<div class="modal fade  come-from-modal right" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Info</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div class="information-block">
+                        <div class="notebook info-cover">
+                            <div class="cover" id="info-url">
                             </div>
-                            <div class="information">
-                                <input type="text" id="info-name" />
-                                <div class="flex-display">
-                                    <img src="~/css/Images/notes.png">
-                                    <p id="info-notes">
-                                    </p>
-                                </div>
-                                <div class="flex-display">
-                                    <img src="~/css/Images/date.png" />
-                                    <p id="info-date">
-                                    </p>
-                                </div>
-                                <div class="flex-display">
-                                    <img src="~/css/Images/date-modified.png" class="info-mod-img" />
-                                    <p id="info-date-modified">
-                                    </p>
-                                </div>
+                            <p class="title custom-cover-btn" id="custom-cover">Custom Cover</p>
+                            <input type='file' id="uploadImage" class="d-none" />
+                        </div>
+                        <div class="information">
+                            <input type="text" id="info-name" />
+                            <div class="flex-display">
+                                <img src="~/css/Images/notes.png">
+                                <p id="info-notes">
+                                </p>
+                            </div>
+                            <div class="flex-display">
+                                <img src="~/css/Images/date.png" />
+                                <p id="info-date">
+                                </p>
+                            </div>
+                            <div class="flex-display">
+                                <img src="~/css/Images/date-modified.png" class="info-mod-img" />
+                                <p id="info-date-modified">
+                                </p>
                             </div>
                         </div>
-                        <div class="default-images">
+                    </div>
+                    <div class="default-images">
 
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
+</div>
 
-    <script src="~/js/simpleNotify.js"></script>
-    <script>
+
+<script src="~/js/simpleNotify.js"></script>
+<script>
     updateDeleteBtn();
     updateInfo();
 
@@ -322,4 +329,61 @@
             }
         });
 
-    </script>
+
+
+        //SORT--------------------------------------
+        var option = 2;
+        var direction = 1;
+
+        $('#sort-icon').on('click', function () {
+            if ($(this).attr('src').includes('desc')) {
+                $(this).attr('src', '/css/Images/sort.png');
+                direction = 1;
+            }
+            else {
+                $(this).attr('src', '/css/Images/sort-desc.png');
+                direction = 2;
+            }
+            sortNotebooks();
+        });
+
+        $('#sortNotebooks').on('change', function () {
+            option = this.value;
+            sortNotebooks();
+        });
+
+    function sortNotebooks() {
+            $.ajax({
+                type: "POST",
+                url: `/Notebook/SortNotebooks?id=${$('#userId').text()}&option=${option}&direction=${direction}`,
+                data: {},
+                success: function (response) {
+                    $("#notebooks").html("");
+                    $.each(response.data, function (id) {
+                    console.log(this.name);
+                        var default_image = "https://i.pinimg.com/564x/aa/39/8a/aa398a7716c8f0b75f7b60ee3225a5fc.jpg";
+                        var style = "background-image: url(" + (this.cover != null ? this.cover : default_image) + ")";
+                        $("#notebooks").append(`
+                            <div class="notebook">
+                                <div class="cover" style="${style}" id="cover-${this.id}">
+                                    <div class="notebook-actions">
+                                        <div class="notebook-all-actions" notebook-id="${this.id}">
+                                            <img class="notebook-action notebook-info" src="/css/Images/info.png"
+                                                 name="${this.name}" created="${this.created}" modified="${this.modified}"
+                                                 cover="${this.cover}" notebook-id="${this.id}" notes="2" image="${this.defaultImage}"
+                                                 data-toggle="modal" data-target="#myModal" title="Info" />
+                                            <img class="notebook-action notebook-delete" src="/css/Images/trash.png" title="Delete" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="title" id="notebook-title-${this.id}">${this.name}</p>
+                            </div>`);
+                    });
+                },
+                error: function (response) {
+                    console.log(response.responseText);
+                }
+            });
+        }
+
+</script>
