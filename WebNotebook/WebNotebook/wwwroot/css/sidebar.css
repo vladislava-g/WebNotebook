@@ -17,7 +17,7 @@
 
 .come-from-modal.left .modal-body,
 .come-from-modal.right .modal-body {
-    padding: 15px 15px 80px;
+    padding: 15px 15px;
 }
 
 .come-from-modal.right.fade .modal-dialog {
@@ -30,4 +30,9 @@
 
 .come-from-modal.right.fade.in .modal-dialog {
     right: 0;
+}
+
+
+.modal-body{
+    padding-bottom: 0px !important;
 }

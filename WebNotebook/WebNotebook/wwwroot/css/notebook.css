@@ -101,6 +101,7 @@
 
 .information-block {
     display: flex !important;
+    height: 40vh !important;
 }
 
     .information-block  .info-cover {
@@ -143,3 +144,38 @@
 .flex-display{
     display: flex !important;
 }
+
+.default-images {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    overflow-y: scroll;
+    height: 45vh;
+}
+
+.default-images .notebook{
+    margin: 5px;
+    margin-left: 15px;
+}
+
+.current-cover {
+    background-color: rgba(0,0,0,0.5);
+    height: 200px;
+    width: 140px;
+    background-size: cover;
+    border-radius: 0px 10px 10px 0px;
+    box-shadow: 0px 0px 10px -5px #6f6f6f;
+    background-image: url(/css/Images/checked.png);
+    background-position: center;
+    background-size: 50px;
+    background-repeat: no-repeat;
+}
+
+.default-image{
+    transition: .3s !important;
+}
+
+    .default-image:hover {
+        background-size: auto 105% !important;
+        cursor: pointer;
+    }

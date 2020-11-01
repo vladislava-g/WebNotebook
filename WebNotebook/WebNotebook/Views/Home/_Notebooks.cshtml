@@ -1,4 +1,6 @@
-﻿@model WebNotebook.Models.Notebook;
+﻿@using WebNotebook.Models;
+@using System.Linq;
+@model WebNotebook.Models.Notebook;
 @{
     var default_img = "https://i.pinimg.com/564x/aa/39/8a/aa398a7716c8f0b75f7b60ee3225a5fc.jpg";
 }
@@ -16,12 +18,12 @@
     {
         var style = "background-image: url(" + (notebook.Cover != null ? notebook.Cover : default_img) + ")";
         <div class="notebook">
-            <div class="cover" style="@style">
+            <div class="cover" style="@style" id="cover-@notebook.Id">
                 <div class="notebook-actions">
                     <div class="notebook-all-actions" notebook-id="@notebook.Id">
                         <img class="notebook-action notebook-info" src="~/css/Images/info.png"
                              name="@notebook.Name" created="@notebook.Created" modified="@notebook.Modified"
-                             cover="@notebook.Cover" notebook-id="@notebook.Id" notes="2"
+                             cover="@notebook.Cover" notebook-id="@notebook.Id" notes="2" image="@notebook.DefaultImage"
                              data-toggle="modal" data-target="#myModal" title="Info" />
                         <img class="notebook-action notebook-delete" src="~/css/Images/trash.png" title="Delete" />
                     </div>
@@ -44,7 +46,8 @@
                             <div class="notebook info-cover">
                                 <div class="cover" id="info-url">
                                 </div>
-                                <p class="title custom-cover-btn">Custom Cover</p>
+                                <p class="title custom-cover-btn" id="custom-cover">Custom Cover</p>
+                                <input type='file' id="uploadImage" class="d-none" />
                             </div>
                             <div class="information">
                                 <input type="text" id="info-name" />
@@ -64,6 +67,9 @@
                                     </p>
                                 </div>
                             </div>
+                        </div>
+                        <div class="default-images">
+
                         </div>
                     </div>
                 </div>
@@ -96,12 +102,13 @@
 
                         $("#notebooks").prepend(`
                 <div class="notebook">
-                <div class="cover" style="background-image: url(${new_notebook.cover})">
+                <div class="cover" style="background-image: url(${new_notebook.cover})" id="cover-${new_notebook.id}">
                 <div class="notebook-actions">
                     <div class="notebook-all-actions" notebook-id="${new_notebook.id}">
                         <img class="notebook-action notebook-info" src="/css/Images/info.png"
                              name="${new_notebook.name}" created="${new_notebook.created}" modified="${new_notebook.modified}"
-                             cover="${new_notebook.cover}" notebook-id="${new_notebook.id}" notes="2"
+                             cover="${new_notebook.cover}" notebook-id="${new_notebook.id}" notes="2" image="${new_notebook.defaultImage}"
+
                              data-toggle="modal" data-target="#myModal" title="Info"/>
                         <img class="notebook-action notebook-delete" src="/css/Images/trash.png" title="Delete" />
                     </div>
@@ -137,24 +144,29 @@
 
         function updateInfo() {
 
-        $('.notebook-info').on('click', function () {
-        let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            $('.notebook-info').on('click', function () {
+                let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-            $('#info-name').val($(this).attr('name'));
-            console.log($('#info-name').val($(this).attr('name')));
-        $('#info-name').attr('notebook-id', $(this).attr('notebook-id'));
+                $('#info-name').val($(this).attr('name'));
+                $('#info-name').attr('notebook-id', $(this).attr('notebook-id'));
 
-        $('#info-notes').text($(this).attr('notes') + ' Notes');
+                $('#info-notes').text($(this).attr('notes') + ' Notes');
 
-        let created = new Date($(this).attr('created'));
-        let modified = new Date($(this).attr('modified'));
+                let created = new Date($(this).attr('created'));
+                let modified = new Date($(this).attr('modified'));
 
-        $('#info-date').text(created.getDate() + " " + monthNames[created.getMonth()] + " " + created.getFullYear());
-        $('#info-date-modified').text(modified.getDate() + " " + monthNames[modified.getMonth()] + " " + modified.getFullYear());
+                $('#info-date').text(created.getDate() + " " + monthNames[created.getMonth()] + " " + created.getFullYear());
+                $('#info-date-modified').text(modified.getDate() + " " + monthNames[modified.getMonth()] + " " + modified.getFullYear());
 
-        let url = $(this).attr('cover') != null ? $(this).attr('cover') : "@default_img";
-        $('#info-url').css('background-image', 'url("' + url + '")');
-    });
+                let url = $(this).attr('cover') != null ? $(this).attr('cover') : "@default_img";
+                $('#info-url').css('background-image', 'url("' + url + '")');
+
+
+                $('.default-images').attr('notebook-id', $(this).attr('notebook-id'));
+                getDefaultImages($(this).attr('image') != null ? $(this).attr('image') : 0, url);
+        });
+
+
 
         $('#info-name').on('change', function () {
             let id = $(this).attr('notebook-id');
@@ -176,6 +188,138 @@
 
         }
 
+        function getDefaultImages(image_id, custom_url) {
+             $.ajax({
+            type: "GET",
+            url: `/Notebook/GetDefaultImages`,
+                 success: function (response) {
 
+                     $(".default-images").html("");
+
+                     $.each(response.data, function (id) {
+                         if (this.id != image_id) {
+                             var style = "background-image: url(" + (this.url) + ")";
+                             $(".default-images").prepend(`
+                                          <div class="notebook">
+                                               <div class="cover default-image" style="${style}" images-id="${this.id}" default-image-id="${this.id}" id="selectimg${this.id}" url="${this.url}">
+                                                     <div class="current-cover d-none" id="img${this.id}"></div>
+                                               </div>
+                                           </div>
+                                     `);
+                            updateDefaultImageBtn(this.id);
+
+                         }
+                     });
+
+                     if (image_id != 0) {
+                         $.each(response.data, function (id) {
+                             if (this.id == image_id) {
+                                 var style = "background-image: url(" + (this.url) + ")";
+                                 $(".default-images").prepend(`
+                                          <div class="notebook">
+                                               <div class="cover default-image" style="${style}" images-id="${this.id}" default-image-id="${this.id}" id="selectimg${this.id}" url="${this.url}">
+                                                     <div class="current-cover current-cover-show" id="img${this.id}"></div>
+                                               </div>
+                                           </div>
+                                     `);
+                                 updateDefaultImageBtn(this.id);
+                             }
+                         });
+                     }
+                     else {
+                         var style = "background-image: url(" + (custom_url) + ")";
+                         $(".default-images").prepend(`
+                                          <div class="notebook">
+                                               <div class="cover default-image" style="${style}" images-id="-1" default-image-id="-1" url="${custom_url}" id="selectimg-1">
+                                                     <div class="current-cover current-cover-show" id="img-1"></div>
+                                               </div>
+                                           </div>
+                                     `);
+                         updateDefaultImageBtn(-1);
+                     }
+
+                 },
+
+            error: function (response) {
+                console.log(response.responseText);
+            }
+        });
+        }
+
+        function updateDefaultImageBtn(id) {
+                $('#selectimg' + id).on('click', function () {
+                    let notebook_id = $('.default-images').attr('notebook-id');
+                $('.current-cover-show').addClass('d-none');
+                $('.current-cover-show').removeClass('current-cover-show');
+
+                $('#img' + id).removeClass('d-none');
+                    $('#img' + id).addClass('current-cover-show');
+                $('#info-url').css('background-image', 'url("' + $(this).attr('url') + '")');
+
+                    var url = $(this).attr('url');
+                $.ajax({
+                    type: "POST",
+                    url: `/Notebook/Update?id=${notebook_id}&cover=${$(this).attr('url')}`,
+                    data: {},
+                    success: function (response) {
+                        $('#cover-'+ notebook_id).css('background-image', 'url("' + url + '")');
+                    },
+                    error: function (response) {
+                        console.log(response.responseText);
+                    }
+                });
+            });
+        }
+
+        $('#custom-cover').on('click', function () {
+            $('#uploadImage').click();
+        });
+
+        document.querySelector('input[type="file"]').addEventListener('change', async function() {
+            if (this.files && this.files[0]) {
+                try {
+                    let data = new FormData();
+                    data.append('file', this.files[0]);
+                    data.append('upload_preset', 'pxswbvyr');
+                    const res = await fetch(
+                        'https://api.cloudinary.com/v1_1/dd6b2ufgk/image/upload',
+                        {
+                            method: 'POST',
+                            body: data
+                        }
+                    )
+                    const file = await res.json();
+                    var fileUrl = file.secure_url;
+                    $("#selectimg-1").parent().remove();
+                    $(".current-cover-show").addClass("d-none");
+                    $(".current-cover-show").removeClass("current-cover-show");
+
+                    var style = "background-image: url(" + (fileUrl) + ")";
+                    $(".default-images").prepend(`
+                         <div class="notebook">
+                              <div class="cover default-image" style="${style}" images-id="-1" default-image-id="-1" url="${fileUrl}" id="selectimg-1">
+                                    <div class="current-cover current-cover-show" id="img-1"></div>
+                              </div>
+                          </div>
+                                     `);
+                    updateDefaultImageBtn(-1);
+                    $('#info-url').css('background-image', 'url("' + fileUrl + '")');
+
+                    let notebook_id = $('.default-images').attr('notebook-id');
+                    $.ajax({
+                        type: "POST",
+                        url: `/Notebook/Update?id=${notebook_id}&cover=${fileUrl}`,
+                        data: {},
+                        success: function (response) {
+                            $('#cover-' + notebook_id).css('background-image', 'url("' + fileUrl + '")');
+                        },
+                        error: function (response) {
+                            console.log(response.responseText);
+                        }
+                    });
+                }
+                catch { }
+            }
+        });
 
     </script>

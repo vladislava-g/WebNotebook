@@ -26,13 +26,20 @@ namespace WebNotebook.Controllers
         {
             ViewBag.Notebooks = notebookRepository.GetAll().Where(x => x.CreatorId == id).OrderByDescending(x => x.Modified);
             ViewBag.UserId = id;
+            ViewBag.Images = imagesRepository.GetAll();
             return PartialView("~/Views/Home/_Notebooks.cshtml");
+        }
+
+        public ActionResult GetDefaultImages()
+        {
+            return Json(new { Data = imagesRepository.GetAll() });
         }
 
         public ActionResult Create(int id = 0)
         {
-            int? default_img = notebookRepository.GetAll().Select(x => x.DefaultImage).Max();
-            var image = imagesRepository.GetAll().Where(x => x.Id == (default_img != null && default_img != 10 ? default_img + 1 : 1)).First();
+            Random rnd = new Random();
+            var num = rnd.Next(1, 11);
+            var image = imagesRepository.GetAll().Where(x => x.Id == num).FirstOrDefault();
 
             var notebook = new Notebook();
             notebook.CreatorId = id;
@@ -50,13 +57,14 @@ namespace WebNotebook.Controllers
 
         public ActionResult Delete(int id = 0)
         {
-            try {
+            try
+            {
                 notebookRepository.Delete(notebookRepository.Get(id));
-                return Json(new Data() { Success = true} );
+                return Json(new Data() { Success = true });
             }
             catch
             {
-                return Json(new Data() { Success = false} );
+                return Json(new Data() { Success = false });
 
             }
         }
@@ -69,7 +77,11 @@ namespace WebNotebook.Controllers
                 if (name != "")
                     notebook.Name = name;
                 if (cover != "")
+                {
                     notebook.Cover = cover;
+                    int default_img = imagesRepository.GetAll().Where(x => x.Url == cover).Select(x => x.Id).FirstOrDefault();
+                    notebook.DefaultImage = default_img;
+                }
 
                 notebookRepository.SaveChanges();
                 return Json(new Data() { Success = true });
