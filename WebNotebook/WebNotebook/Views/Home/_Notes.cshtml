@@ -1,1 +1,85 @@
-﻿<h1>Notes</h1>
+﻿@using WebNotebook.Models;
+@using Microsoft.AspNetCore.Html;
+<div id="notes-header">
+    <div>
+        <h4>
+            <img id="goBack" class="@ViewBag.GoBackClass" src="~/css/Images/left-arrow.png" />
+            @ViewBag.Title
+        </h4>
+    </div>
+    <div class="options">
+        <p id="addNote"><img src="~/css/Images/plus.png" />Note</p>
+        <p>
+            <img src="~/css/Images/sort.png" id="sort-icon" />
+            <select id="sortNotes">
+                <option value="1">Name&nbsp;</option>
+                <option value="2" selected>Date Modified&nbsp;</option>
+                <option value="3">Date Created&nbsp;</option>
+            </select>
+        </p>
+    </div>
+</div>
+
+
+<div id="notes">
+
+    @foreach (Note note in ViewBag.Notes)
+    {
+        <div class="note-preview" style="background-color: @note.Hex">
+            <p class="title-preview">@note.Title</p>
+                @{
+                    HtmlString msg = new HtmlString(note.Content);
+            <div class="content-preview">
+                     @msg 
+                    </div>
+                }
+        </div>
+    }
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('main').load(`/Notebook/GetNotes?id=${$('#userId').text()}`);
+    });
+
+
+    $('#goBack').on('click', function () {
+        $('main').load(`Notebook/GetNotebooks?id=${$('#userId').text()}`);
+    });
+
+    $("#addNote").on('click', function () {
+        $.ajax({
+            type: "POST",
+            url: `/Note/SortNotebooks?id=${$('#userId').text()}&option=${option}&direction=${direction}`,
+            data: {},
+            success: function (response) {
+                $("#notebooks").html("");
+                $.each(response.data, function (id) {
+                    var default_image = "https://i.pinimg.com/564x/aa/39/8a/aa398a7716c8f0b75f7b60ee3225a5fc.jpg";
+                    var style = "background-image: url(" + (this.cover != null ? this.cover : default_image) + ")";
+                    $("#notebooks").append(`
+                            <div class="notebook">
+                                <div class="cover" style="${style}" id="cover-${this.id}">
+                                    <div class="notebook-actions">
+                                        <div class="notebook-all-actions" notebook-id="${this.id}">
+                                            <img class="notebook-action notebook-info" src="/css/Images/info.png"
+                                                 name="${this.name}" created="${this.created}" modified="${this.modified}"
+                                                 cover="${this.cover}" notebook-id="${this.id}" notes="2" image="${this.defaultImage}"
+                                                 data-toggle="modal" data-target="#myModal" title="Info" />
+                                            <img class="notebook-action notebook-delete" src="/css/Images/trash.png" title="Delete" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="title" id="notebook-title-${this.id}">${this.name}</p>
+                            </div>`);
+                });
+            },
+            error: function (response) {
+                console.log(response.responseText);
+            }
+        });
+    });
+    
+
+</script>

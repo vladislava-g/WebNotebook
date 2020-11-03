@@ -34,7 +34,6 @@ namespace WebNotebook.Models.Repositories
         public IEnumerable<DefaultImage> GetAll()
         {
             return db.DefaultImage.ToList();
-            return db.DefaultImage.ToList();
         }
 
         public void SaveChanges()

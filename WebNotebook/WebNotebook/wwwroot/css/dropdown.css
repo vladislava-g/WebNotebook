@@ -29,3 +29,18 @@ select {
 #sort-icon:hover{
     opacity: .3;
 }
+
+#sortNotes {
+    border: none;
+    background-color: transparent;
+}
+
+    #sortNotes:focus {
+        border: none !important;
+        outline: none !important;
+        background-color: transparent;
+    }
+
+    #sortNotes:hover {
+        cursor: pointer;
+    }

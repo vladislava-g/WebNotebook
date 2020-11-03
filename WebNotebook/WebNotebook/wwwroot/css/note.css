@@ -1,0 +1,59 @@
+﻿#notes-header {
+    display: flex;
+    justify-content: space-between;
+    width: 95vw;
+    margin: 4% 1vw;
+}
+
+    #notes-header .options {
+        display: flex;
+    }
+
+        #notes-header .options img, #goBack {
+            width: 14px;
+            margin-right: 10px;
+            margin-top: -3px;
+        }
+
+        #notes-header .options p {
+            padding: 3px 15px !important;
+            border-radius: 5px !important;
+            margin-left: 10px;
+            transition: .3s;
+        }
+
+            #notes-header .options p:hover {
+                cursor: pointer;
+                background-color: #fafafa;
+            }
+
+
+#notes {
+    display: flex;
+    flex-wrap: wrap;
+    width: 95vw;
+    margin-top: -55px;
+    margin-left: -25px;
+}
+
+#goBack:hover{
+    cursor: pointer;
+}
+
+/*-----------------------------------PREVIEW-----------------------------------*/
+
+.note-preview {
+    width: 200px;
+    height: 200px;
+    background-color: lightgreen;
+    margin-left: 25px;
+    margin-top: 55px;
+    padding: 10px 20px;
+    overflow: hidden;
+}
+
+.title-preview {
+    text-align: center;
+    font-weight: 500;
+}
+

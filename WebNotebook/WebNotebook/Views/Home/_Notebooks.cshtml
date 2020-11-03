@@ -88,6 +88,7 @@
 
 <script src="~/js/simpleNotify.js"></script>
 <script>
+    updateCoverBtn();
     updateDeleteBtn();
     updateInfo();
 
@@ -126,6 +127,7 @@
                 );
 
         updateDeleteBtn();
+        updateCoverBtn();
         updateInfo();
 
     });
@@ -360,7 +362,6 @@
                 success: function (response) {
                     $("#notebooks").html("");
                     $.each(response.data, function (id) {
-                    console.log(this.name);
                         var default_image = "https://i.pinimg.com/564x/aa/39/8a/aa398a7716c8f0b75f7b60ee3225a5fc.jpg";
                         var style = "background-image: url(" + (this.cover != null ? this.cover : default_image) + ")";
                         $("#notebooks").append(`
@@ -379,11 +380,20 @@
                                 <p class="title" id="notebook-title-${this.id}">${this.name}</p>
                             </div>`);
                     });
+                    updateCoverBtn();
+                    updateDeleteBtn();
                 },
                 error: function (response) {
                     console.log(response.responseText);
                 }
             });
-        }
+    }
+
+    function updateCoverBtn() {
+        $('.cover').on('click', function () {
+            var id = $(this).attr('id').slice(6);
+            $('main').load(`/Note/GetByNotebook?id=${id}`);
+        });
+    }
 
 </script>

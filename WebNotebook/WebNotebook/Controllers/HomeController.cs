@@ -49,12 +49,6 @@ namespace WebNotebook.Controllers
             return claim_email == null || claim_password == null || user == null ? false : true;
         }
    
-        
-        public ActionResult GetNotes()
-        {
-            return PartialView("_Notes");
-        }   
-        
         public ActionResult GetFavorites()
         {
             return PartialView("_Favorites");
