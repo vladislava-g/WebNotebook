@@ -77,5 +77,49 @@ namespace WebNotebook.Controllers
             return Json(note);
 
         }
+
+
+        public ActionResult Update(int id = 0, string name = "", string content = "")
+        {
+            try
+            {
+                var note = noteRepository.Get(id);
+                var notebook = notebookRepository.GetAll().Where(x => x.Id == note.NotebookId).FirstOrDefault();
+                notebook.Modified = DateTime.Now;
+
+                if (name != "")
+                    note.Title = name;
+                if (content != "")
+                    note.Content = content;
+
+                note.Modified = DateTime.Now;
+                noteRepository.SaveChanges();
+                notebookRepository.SaveChanges();
+                return Json(new Data() { Success = true });
+            }
+            catch
+            {
+                return Json(new Data() { Success = false });
+
+            }
+        }
+
+        public ActionResult Delete(int id = 0)
+        {
+            try
+            {
+                var note = noteRepository.Get(id);
+                noteRepository.Delete(note);
+                var notebook = notebookRepository.GetAll().Where(x => x.Id == note.NotebookId).FirstOrDefault();
+                notebook.Modified = DateTime.Now;
+                notebookRepository.SaveChanges();
+                return Json(new Data() { Success = true });
+            }
+            catch
+            {
+                return Json(new Data() { Success = false });
+
+            }
+        }
     }
 }

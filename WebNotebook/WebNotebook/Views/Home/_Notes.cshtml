@@ -1,5 +1,6 @@
 ﻿@using WebNotebook.Models;
 @using Microsoft.AspNetCore.Html;
+<script src="https://use.fontawesome.com/3086b399c7.js"></script>
 <div id="notes-header">
     <div>
         <h4>
@@ -20,21 +21,75 @@
     </div>
 </div>
 
-
+<div class="d-none" data-toggle="modal" data-target="#myModalNote" id="showModalBtn"></div>
 <div id="notes">
 
     @foreach (Note note in ViewBag.Notes)
     {
-        <div class="note-preview" style="background-color: @note.Hex">
-            <p class="title-preview">@note.Title</p>
+        <div class="note-preview" style="background-color: @note.Hex" note-id="@note.Id">
+            <p class="title-preview" id="note-title-@note.Id">@note.Title</p>
             @{
                 HtmlString msg = new HtmlString(note.Content);
-                <div class="content-preview">
+                <div class="content-preview" id="note-content-@note.Id">
                     @msg
                 </div>
             }
         </div>
-    }
+                }
+</div>
+
+<div class="modal fade come-from-modal" id="myModalNote" tabindex="-1" role="dialog" aria-labelledby="myModalLabelNote" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabelNote"><input type="text" id="note-title" placeholder="Untitled" /></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeNote"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <link href='https://fonts.googleapis.com/css?family=Dosis|Candal' rel='stylesheet' type='text/css'>
+                    <div class="toolbar">
+                        <a href="#" data-command='undo'><i class='fa fa-undo'></i></a>
+                        <a href="#" data-command='redo'><i class='fa fa-repeat'></i></a>
+                        <div class="fore-wrapper">
+                            <i class='fa fa-font' style='color:#C96;'></i>
+                            <div class="fore-palette">
+                            </div>
+                        </div>
+                        <div class="back-wrapper">
+                            <i class='fa fa-font' style='background:#C96;'></i>
+                            <div class="back-palette">
+                            </div>
+                        </div>
+                        <a href="#" data-command='bold'><i class='fa fa-bold'></i></a>
+                        <a href="#" data-command='italic'><i class='fa fa-italic'></i></a>
+                        <a href="#" data-command='underline'><i class='fa fa-underline'></i></a>
+                        <a href="#" data-command='strikeThrough'><i class='fa fa-strikethrough'></i></a>
+                        <a href="#" data-command='justifyLeft'><i class='fa fa-align-left'></i></a>
+                        <a href="#" data-command='justifyCenter'><i class='fa fa-align-center'></i></a>
+                        <a href="#" data-command='justifyRight'><i class='fa fa-align-right'></i></a>
+                        <a href="#" data-command='justifyFull'><i class='fa fa-align-justify'></i></a>
+                        <a href="#" data-command='indent'><i class='fa fa-indent'></i></a>
+                        <a href="#" data-command='outdent'><i class='fa fa-outdent'></i></a>
+                        <a href="#" data-command='insertUnorderedList'><i class='fa fa-list-ul'></i></a>
+                        <a href="#" data-command='insertOrderedList'><i class='fa fa-list-ol'></i></a>
+                        <a href="#" data-command='h1'>H1</a>
+                        <a href="#" data-command='h2'>H2</a>
+                        <a href="#" data-command='createlink'><i class='fa fa-link'></i></a>
+                        <a href="#" data-command='unlink'><i class='fa fa-unlink'></i></a>
+                        <a href="#" data-command='insertimage'><i class='fa fa-image'></i></a>
+                        <a href="#" data-command='p'>P</a>
+                        <a href="#" data-command='subscript'><i class='fa fa-subscript'></i></a>
+                        <a href="#" data-command='superscript'><i class='fa fa-superscript'></i></a>
+                    </div>
+                    <div id='editor' contenteditable>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 
@@ -46,7 +101,7 @@
             $("#loader").addClass("d-none");
             $("main").removeClass("d-none");
     });
-
+    updateBtn();
 
     $('#goBack').on('click', function () {
         $("#loader").removeClass("d-none");
@@ -64,8 +119,8 @@
             success: function (response) {
                     $("#notes").prepend(`
                          <div class="note-preview" style="background-color: ${response.hex}">
-                             <p class="title-preview">${response.title}</p>
-                             <div class="content-preview">
+                             <p class="title-preview" id="note-title-${response.id}>${response.title}</p>
+                             <div class="content-preview" id="note-content-${response.id}">
                             </div>
                         </div>`);
             },
@@ -73,8 +128,83 @@
                 console.log(response.responseText);
             }
         });
+        updateBtn();
         $("#preloader").addClass("d-none");
     });
 
 
+    $('.note-preview').on('click', function () {
+        $("#note-title").attr('note-id', $(this).attr('note-id'));
+        var text = $("#note-title-"+$(this).attr('note-id')).text() != "Untitled" ? $("#note-title-"+$(this).attr('note-id')).text() : "";
+        $("#note-title").val(text);
+        $("#editor").html($('#note-content-' +  $(this).attr('note-id')).html());
+
+        $("#showModalBtn").click();
+
+    });
+
+    function updateBtn(){
+        $('#note-title').on('change', function () {
+            let id = $(this).attr('note-id');
+            let name = $(this).val();
+
+        $.ajax({
+            type: "POST",
+            url: `/Note/Update?id=${id}&name=${name}`,
+            data: {},
+            success: function (response) {
+                $('#note-title-' + id).text(name);
+            },
+            error: function (response) {
+                console.log(response.responseText);
+            }
+        });
+    });
+    }
+
+    $('#closeNote').on('click', function () {
+        let id = $(this).attr('note-id');
+        let content = $("#editor").html().replace(/(<([^>]+)>)/gi, "");
+        $.ajax({
+            type: "POST",
+            url: `/Note/Update?id=${id}&content=${content}`,
+            data: {},
+            success: function (response) {
+                $('#note-content-' + id).html(content);
+            },
+            error: function (response) {
+                console.log(response.responseText);
+            }
+        });
+    });
+
+</script>
+
+
+
+@* EDITOR LOGIC ------------------------------------------------------------------------------------------------------------ *@
+
+<script>
+    var colorPalette = ['000000', '99B898', 'FECEAB', 'FF847C', 'fdfd96', 'ffafb9', 'aec6cf', 'A8E6CE', 'DCEDC2', 'FFFFFF'];
+    var forePalette = $('.fore-palette');
+    var backPalette = $('.back-palette');
+
+    for (var i = 0; i < colorPalette.length; i++) {
+        forePalette.append('<a href="#" data-command="forecolor" data-value="' + '#' + colorPalette[i] + '" style="background-color:' + '#' + colorPalette[i] + ';" class="palette-item"></a>');
+        backPalette.append('<a href="#" data-command="backcolor" data-value="' + '#' + colorPalette[i] + '" style="background-color:' + '#' + colorPalette[i] + ';" class="palette-item"></a>');
+    }
+
+    $('.toolbar a').click(function (e) {
+        var command = $(this).data('command');
+        if (command == 'h1' || command == 'h2' || command == 'p') {
+            document.execCommand('formatBlock', false, command);
+        }
+        if (command == 'forecolor' || command == 'backcolor') {
+            document.execCommand($(this).data('command'), false, $(this).data('value'));
+        }
+        if (command == 'createlink' || command == 'insertimage') {
+            url = prompt('Enter the link here: ', 'http:\/\/'); document.execCommand($(this).data('command'), false, url);
+        }
+        else document.execCommand($(this).data('command'), false, null);
+    });
 </script>

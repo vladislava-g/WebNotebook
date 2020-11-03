@@ -35,7 +35,7 @@
     width: 100vw;
     margin-top: -55px;
     margin-left: -50px;
-    margin-right: -15px!important;
+    margin-right: -15px !important;
 }
 
 .notebook {
@@ -93,7 +93,8 @@
     opacity: 0;
     transition: .3s;
 }
-    .notebook-actions:hover{
+
+    .notebook-actions:hover {
         opacity: 1;
         cursor: pointer;
     }
@@ -105,11 +106,11 @@
     height: 40vh !important;
 }
 
-    .information-block  .info-cover {
+    .information-block .info-cover {
         margin: 15px;
     }
 
-    .information-block .information{
+    .information-block .information {
         margin-top: 15px;
     }
 
@@ -117,6 +118,7 @@
             height: 25px !important;
             margin-right: 5px;
         }
+
         .information-block .information .info-mod-img {
             height: 30px !important;
             margin-right: 1px;
@@ -138,11 +140,11 @@
         background-image: none;
     }
 
-.custom-cover-btn:hover{
+.custom-cover-btn:hover {
     cursor: pointer;
 }
 
-.flex-display{
+.flex-display {
     display: flex !important;
 }
 
@@ -154,10 +156,10 @@
     height: 45vh;
 }
 
-.default-images .notebook{
-    margin: 5px;
-    margin-left: 15px;
-}
+    .default-images .notebook {
+        margin: 5px;
+        margin-left: 15px;
+    }
 
 .current-cover {
     background-color: rgba(0,0,0,0.5);
@@ -172,7 +174,7 @@
     background-repeat: no-repeat;
 }
 
-.default-image{
+.default-image {
     transition: .3s !important;
 }
 
