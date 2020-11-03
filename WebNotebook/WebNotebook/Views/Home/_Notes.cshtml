@@ -27,12 +27,12 @@
     {
         <div class="note-preview" style="background-color: @note.Hex">
             <p class="title-preview">@note.Title</p>
-                @{
-                    HtmlString msg = new HtmlString(note.Content);
-            <div class="content-preview">
-                     @msg 
-                    </div>
-                }
+            @{
+                HtmlString msg = new HtmlString(note.Content);
+                <div class="content-preview">
+                    @msg
+                </div>
+            }
         </div>
     }
 </div>
@@ -40,46 +40,41 @@
 
 <script>
     $(document).ready(function () {
-        $('main').load(`/Notebook/GetNotes?id=${$('#userId').text()}`);
+        //if ($(".active").attr('name') == "notes") {
+        //    $('main').load(`/Note/GetNotes?id=${$('#userId').text()}`);
+        //}
+            $("#loader").addClass("d-none");
+            $("main").removeClass("d-none");
     });
 
 
     $('#goBack').on('click', function () {
+        $("#loader").removeClass("d-none");
+        $("main").addClass("d-none");
         $('main').load(`Notebook/GetNotebooks?id=${$('#userId').text()}`);
+        $(".active").removeClass('allowNotes');
     });
 
     $("#addNote").on('click', function () {
+        $("#preloader").removeClass("d-none");
         $.ajax({
             type: "POST",
-            url: `/Note/SortNotebooks?id=${$('#userId').text()}&option=${option}&direction=${direction}`,
+            url: `/Note/Create?notebookId=${@ViewBag.NotebookId}&userId=${@ViewBag.UserId}`,
             data: {},
             success: function (response) {
-                $("#notebooks").html("");
-                $.each(response.data, function (id) {
-                    var default_image = "https://i.pinimg.com/564x/aa/39/8a/aa398a7716c8f0b75f7b60ee3225a5fc.jpg";
-                    var style = "background-image: url(" + (this.cover != null ? this.cover : default_image) + ")";
-                    $("#notebooks").append(`
-                            <div class="notebook">
-                                <div class="cover" style="${style}" id="cover-${this.id}">
-                                    <div class="notebook-actions">
-                                        <div class="notebook-all-actions" notebook-id="${this.id}">
-                                            <img class="notebook-action notebook-info" src="/css/Images/info.png"
-                                                 name="${this.name}" created="${this.created}" modified="${this.modified}"
-                                                 cover="${this.cover}" notebook-id="${this.id}" notes="2" image="${this.defaultImage}"
-                                                 data-toggle="modal" data-target="#myModal" title="Info" />
-                                            <img class="notebook-action notebook-delete" src="/css/Images/trash.png" title="Delete" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="title" id="notebook-title-${this.id}">${this.name}</p>
-                            </div>`);
-                });
+                    $("#notes").prepend(`
+                         <div class="note-preview" style="background-color: ${response.hex}">
+                             <p class="title-preview">${response.title}</p>
+                             <div class="content-preview">
+                            </div>
+                        </div>`);
             },
             error: function (response) {
                 console.log(response.responseText);
             }
         });
+        $("#preloader").addClass("d-none");
     });
-    
+
 
 </script>

@@ -32,9 +32,10 @@
 #notebooks {
     display: flex;
     flex-wrap: wrap;
-    width: 95vw;
+    width: 100vw;
     margin-top: -55px;
-    margin-left: -25px;
+    margin-left: -50px;
+    margin-right: -15px!important;
 }
 
 .notebook {
@@ -79,7 +80,7 @@
         }
 
 .notebook-all-actions {
-    height: 90px;
+    height: 150px;
     width: 35px;
     text-align: right;
     position: absolute;

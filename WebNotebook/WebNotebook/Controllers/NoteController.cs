@@ -25,7 +25,7 @@ namespace WebNotebook.Controllers
         {
             ViewBag.GoBackClass = "";
             ViewBag.UserId = notebookRepository.Get(id).CreatorId;
-            ViewBag.NotebookId = notebookRepository.Get(id).CreatorId;
+            ViewBag.NotebookId = id;
             ViewBag.Title = notebookRepository.Get(id).Name;
             ViewBag.Notes = noteRepository.GetAll().Where(x => x.NotebookId == id).ToList();
             return PartialView("~/Views/Home/_Notes.cshtml");
@@ -35,12 +35,47 @@ namespace WebNotebook.Controllers
         {
             ViewBag.Notes = noteRepository.GetAll().Where(x => x.UserId == id).ToList();
             ViewBag.UserId = id;
-            ViewBag.NotebookId = notebookRepository.GetAll().Where(x => x.CreatorId == id && x.IsDefault == 1);
+            ViewBag.NotebookId = notebookRepository.GetAll().Where(x => x.CreatorId == id && x.IsDefault == 1).FirstOrDefault().Id;
             ViewBag.Title = "Notes";
             ViewBag.GoBackClass = "d-none";
             return PartialView("~/Views/Home/_Notes.cshtml");
         }
 
-       
+        public IActionResult Create(int notebookId = 0, int creatorId = 0)
+        {
+            var notebook = notebookRepository.GetAll().Where(x => x.CreatorId == creatorId && x.IsDefault == 1).FirstOrDefault();
+            if (notebookId != 0)
+                notebook = notebookRepository.Get(notebookId);
+            else
+            {
+                if (notebook == null)
+                {
+                    notebook = notebookRepository.GetAll().FirstOrDefault();
+                    notebook.IsDefault = 1;
+                }
+
+            }
+
+            notebook.Modified = DateTime.Now;
+
+            Random rnd = new Random();
+            var num = rnd.Next(1, 11);
+            var note = new Note()
+            {
+                UserId = notebook.CreatorId,
+                NotebookId = notebook.Id,
+                Content = "",
+                Title = "Untitled",
+                Created = DateTime.Now,
+                Modified = DateTime.Now,
+                Hex = colorRepository.GetAll().Where(x => x.Id == num).FirstOrDefault().Hex,
+                TypeId = 1
+            };
+
+            noteRepository.Create(note);
+            notebookRepository.SaveChanges();
+            return Json(note);
+
+        }
     }
 }

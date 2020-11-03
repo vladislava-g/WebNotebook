@@ -4,6 +4,7 @@
 @{
     var default_img = "https://i.pinimg.com/564x/aa/39/8a/aa398a7716c8f0b75f7b60ee3225a5fc.jpg";
 }
+
 <div id="notebooks-header">
     <h4>Notebooks</h4>
     <div class="options">
@@ -28,6 +29,7 @@
             <div class="cover" style="@style" id="cover-@notebook.Id">
                 <div class="notebook-actions">
                     <div class="notebook-all-actions" notebook-id="@notebook.Id">
+                        <img class="notebook-action notebook-view" src="~/css/Images/view.png" title="View" notebook-id="@notebook.Id" />
                         <img class="notebook-action notebook-info" src="~/css/Images/info.png"
                              name="@notebook.Name" created="@notebook.Created" modified="@notebook.Modified"
                              cover="@notebook.Cover" notebook-id="@notebook.Id" notes="2" image="@notebook.DefaultImage"
@@ -92,8 +94,14 @@
     updateDeleteBtn();
     updateInfo();
 
-    $('#addNotebook').on('click', async function () {
+    $(document).ready(function () {
+        $("#loader").addClass("d-none");
+        $("main").removeClass("d-none");
 
+    });
+
+    $('#addNotebook').on('click', async function () {
+        $("#preloader").removeClass("d-none");
         let new_notebook = null;
 
         await $.ajax({
@@ -113,6 +121,7 @@
                 <div class="cover" style="background-image: url(${new_notebook.cover})" id="cover-${new_notebook.id}">
                 <div class="notebook-actions">
                     <div class="notebook-all-actions" notebook-id="${new_notebook.id}">
+                    <img class="notebook-action notebook-view" src="/css/Images/view.png" title="View" notebook-id="${new_notebook.id}"/>
                         <img class="notebook-action notebook-info" src="/css/Images/info.png"
                              name="${new_notebook.name}" created="${new_notebook.created}" modified="${new_notebook.modified}"
                              cover="${new_notebook.cover}" notebook-id="${new_notebook.id}" notes="2" image="${new_notebook.defaultImage}"
@@ -129,6 +138,7 @@
         updateDeleteBtn();
         updateCoverBtn();
         updateInfo();
+        $("#preloader").addClass("d-none");
 
     });
 
@@ -355,20 +365,23 @@
         });
 
     function sortNotebooks() {
-            $.ajax({
-                type: "POST",
-                url: `/Notebook/SortNotebooks?id=${$('#userId').text()}&option=${option}&direction=${direction}`,
-                data: {},
-                success: function (response) {
-                    $("#notebooks").html("");
-                    $.each(response.data, function (id) {
-                        var default_image = "https://i.pinimg.com/564x/aa/39/8a/aa398a7716c8f0b75f7b60ee3225a5fc.jpg";
-                        var style = "background-image: url(" + (this.cover != null ? this.cover : default_image) + ")";
-                        $("#notebooks").append(`
+        $("#loader").removeClass("d-none");
+        $("main").addClass("d-none");
+        $.ajax({
+            type: "POST",
+            url: `/Notebook/SortNotebooks?id=${$('#userId').text()}&option=${option}&direction=${direction}`,
+            data: {},
+            success: function (response) {
+                $("#notebooks").html("");
+                $.each(response.data, function (id) {
+                    var default_image = "https://i.pinimg.com/564x/aa/39/8a/aa398a7716c8f0b75f7b60ee3225a5fc.jpg";
+                    var style = "background-image: url(" + (this.cover != null ? this.cover : default_image) + ")";
+                    $("#notebooks").append(`
                             <div class="notebook">
                                 <div class="cover" style="${style}" id="cover-${this.id}">
                                     <div class="notebook-actions">
                                         <div class="notebook-all-actions" notebook-id="${this.id}">
+                                            <img class="notebook-action notebook-view" src="/css/Images/view.png" title="View" notebook-id="${this.id}"/>
                                             <img class="notebook-action notebook-info" src="/css/Images/info.png"
                                                  name="${this.name}" created="${this.created}" modified="${this.modified}"
                                                  cover="${this.cover}" notebook-id="${this.id}" notes="2" image="${this.defaultImage}"
@@ -379,20 +392,28 @@
                                 </div>
                                 <p class="title" id="notebook-title-${this.id}">${this.name}</p>
                             </div>`);
-                    });
-                    updateCoverBtn();
-                    updateDeleteBtn();
-                },
-                error: function (response) {
-                    console.log(response.responseText);
-                }
-            });
+                });
+                updateDeleteBtn();
+                updateCoverBtn();
+                updateInfo();
+                $("#loader").addClass("d-none");
+                $("main").removeClass("d-none");
+            },
+            error: function (response) {
+                console.log(response.responseText);
+                $("#loader").addClass("d-none");
+                $("main").removeClass("d-none");
+            }
+        });
     }
 
     function updateCoverBtn() {
-        $('.cover').on('click', function () {
-            var id = $(this).attr('id').slice(6);
+        $('.notebook-view').on('click', function () {
+            var id = $(this).attr('notebook-id');
+            $("#loader").removeClass("d-none");
+            $("main").addClass("d-none");
             $('main').load(`/Note/GetByNotebook?id=${id}`);
+            //$(".active").addClass('allowNotes');
         });
     }
 

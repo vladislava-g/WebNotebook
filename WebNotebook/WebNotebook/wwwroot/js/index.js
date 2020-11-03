@@ -1,5 +1,8 @@
 ﻿$(document).ready(function () {
+    $("#loader").removeClass("d-none");
+    $("main").addClass("d-none");
     $('main').load(`/Notebook/GetNotebooks?id=${$('#userId').text()}`);
+
 });
 
 $(".nav-link").on('click', function (event) {
@@ -9,6 +12,8 @@ $(".nav-link").on('click', function (event) {
     $(".active").removeClass("active");
     $(this).addClass('active');
 
+    $("#loader").removeClass("d-none");
+    $("main").addClass("d-none");
     $('main').load(`/${$(this).attr("action_name")}?id=${$('#userId').text()}`);
 
 });

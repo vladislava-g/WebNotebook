@@ -39,9 +39,7 @@
 #goBack:hover{
     cursor: pointer;
 }
-
 /*-----------------------------------PREVIEW-----------------------------------*/
-
 .note-preview {
     width: 200px;
     height: 200px;
