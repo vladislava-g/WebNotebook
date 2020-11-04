@@ -26,15 +26,15 @@
 
     @foreach (Note note in ViewBag.Notes)
     {
-        <div class="note-preview" style="background-color: @note.Hex" note-id="@note.Id">
-            <p class="title-preview" id="note-title-@note.Id">@note.Title</p>
-            @{
-                HtmlString msg = new HtmlString(note.Content);
-                <div class="content-preview" id="note-content-@note.Id">
-                    @msg
-                </div>
-            }
-        </div>
+    <div class="note-preview" style="background-color: @note.Hex" note-id="@note.Id" oncontextmenu="return showContextMenu(event)">
+        <p class="title-preview" id="note-title-@note.Id">@note.Title</p>
+        @{
+            HtmlString msg = new HtmlString(note.Content);
+            <div class="content-preview" id="note-content-@note.Id">
+                @msg
+            </div>
+        }
+    </div>
     }
 </div>
 
@@ -42,6 +42,9 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
+                <p id="deleteNote">
+                    <i class="fa fa-trash fa4x"></i>
+                </p>
                 <h4 class="modal-title" id="myModalLabelNote"><input type="text" id="note-title" placeholder="Untitled" /></h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeNote"><span aria-hidden="true">&times;</span></button>
             </div>
@@ -94,6 +97,7 @@
 
 
 <script>
+    var current_note;
     $(document).ready(function () {
         //if ($(".active").attr('name') == "notes") {
         //    $('main').load(`/Note/GetNotes?id=${$('#userId').text()}`);
@@ -136,12 +140,14 @@
     });
 
     function updatePreviewBtn(){
-    $('.note-preview').on('click', function () {
+        $('.note-preview').on('click', function () {
+            current_note = this;
         $("#note-title").attr('note-id', $(this).attr('note-id'));
         var text = $("#note-title-"+$(this).attr('note-id')).text() != "Untitled" ? $("#note-title-"+$(this).attr('note-id')).text() : "";
         $("#note-title").val(text);
         $("#editor").html($('#note-content-' +  $(this).attr('note-id')).html());
         $('#closeNote').attr('note-id', $(this).attr('note-id'));
+        $('#deleteNote').attr('note-id', $(this).attr('note-id'));
         $("#showModalBtn").click();
 
     });
@@ -163,7 +169,27 @@
                 console.log(response.responseText);
             }
         });
-    });
+        });
+
+
+        $("#deleteNote").on('click', function () {
+            var id = $(this).attr('note-id');
+
+            $.ajax({
+                type: "POST",
+                url: `/Note/Delete?id=${id}`,
+                data: {},
+                success: function (response) {
+                    $(current_note).addClass("d-none");
+
+                },
+                error: function (response) {
+                    console.log(response.responseText);
+
+                }
+            });
+            $('#closeNote').click();
+        });
     }
 
     $('#closeNote').on('click', function () {
@@ -239,6 +265,8 @@
             }
         });
     }
+
+
 </script>
 
 
