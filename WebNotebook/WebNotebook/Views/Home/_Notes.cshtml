@@ -249,6 +249,7 @@
                         <div class="note-preview" style="background-color: ${this.hex}" note-id="${this.id}">
                              <p class="title-preview" id="note-title-${this.id}">${this.title}</p>
                              <div class="content-preview" id="note-content-${this.id}">
+                                    ${this.content != null ? this.content : ""}
                             </div>
                          </div>
                            `);

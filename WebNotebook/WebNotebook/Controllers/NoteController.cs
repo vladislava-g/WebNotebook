@@ -35,7 +35,7 @@ namespace WebNotebook.Controllers
         {
             ViewBag.Notes = noteRepository.GetAll().Where(x => x.UserId == id).ToList().OrderByDescending(x => x.Modified);
             ViewBag.UserId = id;
-            ViewBag.NotebookId = notebookRepository.GetAll().Where(x => x.CreatorId == id && x.IsDefault == 1).FirstOrDefault().Id;
+            ViewBag.NotebookId = notebookRepository.GetAll().Where(x => x.CreatorId == id).FirstOrDefault().Id;
             ViewBag.Title = "Notes";
             ViewBag.GoBackClass = "d-none";
             return PartialView("~/Views/Home/_Notes.cshtml");
@@ -43,7 +43,7 @@ namespace WebNotebook.Controllers
 
         public IActionResult Create(int notebookId = 0, int creatorId = 0)
         {
-            var notebook = notebookRepository.GetAll().Where(x => x.CreatorId == creatorId && x.IsDefault == 1).FirstOrDefault();
+            var notebook = notebookRepository.GetAll().Where(x => x.CreatorId == creatorId).FirstOrDefault();
             if (notebookId != 0)
                 notebook = notebookRepository.Get(notebookId);
             else

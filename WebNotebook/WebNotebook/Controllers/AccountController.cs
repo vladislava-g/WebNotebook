@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebNotebook.Infrastructure;
 using WebNotebook.Models;
@@ -65,6 +66,19 @@ namespace WebNotebook.Controllers
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
 
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, ""),
+                new Claim(ClaimTypes.UserData, "") 
+            };
+
+            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimTypes.Email, ClaimTypes.UserData);
+            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+            return new JsonResult(new Data { Success = false, Message = "" });
+        }
         #endregion
 
         #region Registration
