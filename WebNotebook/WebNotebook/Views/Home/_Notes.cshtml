@@ -102,6 +102,7 @@
             $("main").removeClass("d-none");
     });
     updateBtn();
+    updatePreviewBtn();
 
     $('#goBack').on('click', function () {
         $("#loader").removeClass("d-none");
@@ -118,21 +119,23 @@
             data: {},
             success: function (response) {
                     $("#notes").prepend(`
-                         <div class="note-preview" style="background-color: ${response.hex}">
-                             <p class="title-preview" id="note-title-${response.id}>${response.title}</p>
+                         <div class="note-preview" style="background-color: ${response.hex}" note-id="${response.id}">
+                             <p class="title-preview" id="note-title-${response.id}">${response.title}</p>
                              <div class="content-preview" id="note-content-${response.id}">
                             </div>
                         </div>`);
+                updatePreviewBtn();
+                updateBtn();
+                $(`[note-id='${response.id}']`).click();
             },
             error: function (response) {
                 console.log(response.responseText);
             }
         });
-        updateBtn();
         $("#preloader").addClass("d-none");
     });
 
-
+    function updatePreviewBtn(){
     $('.note-preview').on('click', function () {
         $("#note-title").attr('note-id', $(this).attr('note-id'));
         var text = $("#note-title-"+$(this).attr('note-id')).text() != "Untitled" ? $("#note-title-"+$(this).attr('note-id')).text() : "";
@@ -142,6 +145,7 @@
         $("#showModalBtn").click();
 
     });
+    }
 
     function updateBtn(){
         $('#note-title').on('change', function () {
