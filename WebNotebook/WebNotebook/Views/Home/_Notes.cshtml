@@ -138,7 +138,7 @@
         var text = $("#note-title-"+$(this).attr('note-id')).text() != "Untitled" ? $("#note-title-"+$(this).attr('note-id')).text() : "";
         $("#note-title").val(text);
         $("#editor").html($('#note-content-' +  $(this).attr('note-id')).html());
-
+        $('#closeNote').attr('note-id', $(this).attr('note-id'));
         $("#showModalBtn").click();
 
     });
@@ -164,11 +164,13 @@
 
     $('#closeNote').on('click', function () {
         let id = $(this).attr('note-id');
-        let content = $("#editor").html().replace(/(<([^>]+)>)/gi, "");
+        let content = $("#editor").html().toString();
         $.ajax({
             type: "POST",
-            url: `/Note/Update?id=${id}&content=${content}`,
-            data: {},
+            url: `/Note/Update?id=${id}`,
+            data: {
+                Content: content
+            },
             success: function (response) {
                 $('#note-content-' + id).html(content);
             },
