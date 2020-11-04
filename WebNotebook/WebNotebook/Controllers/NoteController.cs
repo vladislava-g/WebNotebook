@@ -27,13 +27,13 @@ namespace WebNotebook.Controllers
             ViewBag.UserId = notebookRepository.Get(id).CreatorId;
             ViewBag.NotebookId = id;
             ViewBag.Title = notebookRepository.Get(id).Name;
-            ViewBag.Notes = noteRepository.GetAll().Where(x => x.NotebookId == id).ToList();
+            ViewBag.Notes = noteRepository.GetAll().Where(x => x.NotebookId == id).ToList().OrderByDescending(x => x.Modified);
             return PartialView("~/Views/Home/_Notes.cshtml");
         }
 
         public IActionResult GetNotes(int? id) //by user
         {
-            ViewBag.Notes = noteRepository.GetAll().Where(x => x.UserId == id).ToList();
+            ViewBag.Notes = noteRepository.GetAll().Where(x => x.UserId == id).ToList().OrderByDescending(x => x.Modified);
             ViewBag.UserId = id;
             ViewBag.NotebookId = notebookRepository.GetAll().Where(x => x.CreatorId == id && x.IsDefault == 1).FirstOrDefault().Id;
             ViewBag.Title = "Notes";
@@ -120,6 +120,36 @@ namespace WebNotebook.Controllers
                 return Json(new Data() { Success = false });
 
             }
+        }
+
+        public ActionResult SortNotes(int? id = 0, int? notebook_id = 0, int? option = 2, int? direction = 2)
+        {
+            var notes = noteRepository.GetAll().Where(x => x.UserId == id);
+            if (notebook_id != 0)
+                notes = noteRepository.GetAll().Where(x => x.NotebookId == notebook_id);
+            switch (option)
+            {
+                case 1:
+                    if (direction == 2)
+                        notes = notes.OrderBy(x => x.Title);
+                    else
+                        notes = notes.OrderByDescending(x => x.Title);
+                    break;
+                case 2:
+                    if (direction == 2)
+                        notes = notes.OrderBy(x => x.Modified);
+                    else
+                        notes = notes.OrderByDescending(x => x.Modified);
+                    break;
+                case 3:
+                    if (direction == 2)
+                        notes = notes.OrderBy(x => x.Created);
+                    else
+                        notes = notes.OrderByDescending(x => x.Created);
+                    break;
+            }
+
+            return Json(new { Data = notes });
         }
     }
 }

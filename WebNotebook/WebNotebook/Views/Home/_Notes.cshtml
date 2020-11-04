@@ -35,7 +35,7 @@
                 </div>
             }
         </div>
-                }
+    }
 </div>
 
 <div class="modal fade come-from-modal" id="myModalNote" tabindex="-1" role="dialog" aria-labelledby="myModalLabelNote" data-backdrop="static" data-keyboard="false">
@@ -184,6 +184,61 @@
         });
     });
 
+        //SORT--------------------------------------
+        var option_notes = 2;
+        var direction_notes  = 1;
+
+        $('#sort-icon').on('click', function () {
+            if ($(this).attr('src').includes('desc')) {
+                $(this).attr('src', '/css/Images/sort.png');
+                direction_notes  = 1;
+            }
+            else {
+                $(this).attr('src', '/css/Images/sort-desc.png');
+                direction_notes  = 2;
+            }
+            sortNotes();
+        });
+
+        $('#sortNotes').on('change', function () {
+            option_notes  = this.value;
+            sortNotes();
+        });
+
+    function sortNotes() {
+        $("#loader").removeClass("d-none");
+          var  url = `/Note/SortNotes?notebook_id=${@ViewBag.NotebookId}&option=${option_notes}&direction=${direction_notes}`;
+        if ("@ViewBag.GoBackClass" == "d-none") {
+            url = `/Note/SortNotes?id=${@ViewBag.UserId}&option=${option_notes}&direction=${direction_notes}`;
+        }
+        $("main").addClass("d-none");
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: {},
+            success: function (response) {
+                $("#notes").html("");
+                $.each(response.data, function (id) {
+                    $("#notes").append(`
+                        <div class="note-preview" style="background-color: ${this.hex}" note-id="${this.id}">
+                             <p class="title-preview" id="note-title-${this.id}">${this.title}</p>
+                             <div class="content-preview" id="note-content-${this.id}">
+                            </div>
+                         </div>
+                           `);
+                });
+                updatePreviewBtn();
+                updateBtn();
+                $("#loader").addClass("d-none");
+                $("main").removeClass("d-none");
+            },
+            error: function (response) {
+                console.log(response.responseText);
+                $("#loader").addClass("d-none");
+                $("main").removeClass("d-none");
+            }
+        });
+    }
 </script>
 
 
